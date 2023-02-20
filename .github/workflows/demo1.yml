@@ -1,0 +1,24 @@
+name: Azure Restart Services
+'on':
+  workflow_dispatch:
+    inputs:
+      VmName:
+        description: What VM you want to locate?
+        default: ''
+env:
+  lhClientId: '${{ secrets.P_IFMS1_LIGHTHOUSECONTRIBUTOR_ID }}'
+  lhClientSecret: '${{ secrets.P_IFMS1_LIGHTHOUSECONTRIBUTOR_SECRET }}'
+jobs:
+  LocateVm:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Location script
+        uses: azure/powershell@v1
+        with:
+          inlineScript: >
+            Import-Module
+            ".\restart-az-vm-services\src\restart-az-vm-services.psm1"
+
+            Get-MatchingVmIds -vmName "${{ github.event.inputs.VmName }}"
+          azPSVersion: 9.1.1
